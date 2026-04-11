@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Surya Bhola — Data Analyst</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ease:cubic-bezier(.22,1,.36,1);
+  --font-head:'Playfair Display',Georgia,serif;
+  --font-body:'DM Sans',sans-serif;
+  --font-mono:'DM Mono',monospace;
+}
+[data-theme="dark"]{
+  --bg:#000;--text:#f0eeff;
+  --text-muted:rgba(240,238,255,.55);--text-faint:rgba(240,238,255,.28);
+  --border:rgba(255,255,255,.07);
+  --lg-bg:rgba(255,255,255,.04);--lg-bg-h:rgba(255,255,255,.09);
+  --lg-border:rgba(255,255,255,.13);--lg-border-h:rgba(255,255,255,.32);
+  --lg-shine:rgba(255,255,255,.12);--lg-shine-h:rgba(255,255,255,.22);
+  --lg-shadow:rgba(0,0,0,.6);--lg-glow:rgba(120,80,255,.18);--lg-glow-h:rgba(120,80,255,.35);
+  --nav-bg:rgba(0,0,0,.75);
+  --glow1:#1a1a1a;--glow2:#141414;--glow3:#111;--glow4:#0f0f0f;
+}
+[data-theme="light"]{
+  --bg:#000;--text:#f0eeff;
+  --text-muted:rgba(240,238,255,.55);--text-faint:rgba(240,238,255,.28);
+  --border:rgba(255,255,255,.07);
+  --lg-bg:rgba(255,255,255,.06);--lg-bg-h:rgba(255,255,255,.12);
+  --lg-border:rgba(255,255,255,.15);--lg-border-h:rgba(255,255,255,.35);
+  --lg-shine:rgba(255,255,255,.14);--lg-shine-h:rgba(255,255,255,.26);
+  --lg-shadow:rgba(0,0,0,.7);--lg-glow:rgba(120,80,255,.22);--lg-glow-h:rgba(120,80,255,.42);
+  --nav-bg:rgba(0,0,0,.8);
+  --glow1:#1a1a1a;--glow2:#141414;--glow3:#111;--glow4:#0f0f0f;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:auto;}
+body{background:#000;color:var(--text);font-family:var(--font-body);font-weight:300;overflow-x:hidden;}
+
+/* BG */
+.bg-canvas{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#000;}
+.bg-canvas::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 20% 30%,rgba(30,30,30,.25) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 80% 70%,rgba(20,20,20,.2) 0%,transparent 55%),radial-gradient(ellipse 40% 50% at 60% 10%,rgba(25,25,25,.18) 0%,transparent 50%);}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.18;will-change:transform;mix-blend-mode:screen;}
+.orb1{width:800px;height:800px;background:radial-gradient(circle,var(--glow1) 0%,transparent 70%);top:-250px;left:-200px;animation:float1 20s ease-in-out infinite;}
+.orb2{width:600px;height:600px;background:radial-gradient(circle,var(--glow2) 0%,transparent 70%);top:25%;right:-120px;animation:float2 25s ease-in-out infinite;}
+.orb3{width:700px;height:700px;background:radial-gradient(circle,var(--glow3) 0%,transparent 70%);bottom:-200px;left:25%;animation:float3 28s ease-in-out infinite;}
+.orb4{width:450px;height:450px;background:radial-gradient(circle,var(--glow4) 0%,transparent 70%);top:55%;left:5%;animation:float4 22s ease-in-out infinite;}
+@keyframes float1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(90px,70px) scale(1.12)}66%{transform:translate(-50px,110px) scale(.94)}}
+@keyframes float2{0%,100%{transform:translate(0,0) scale(1)}40%{transform:translate(-100px,60px) scale(1.1)}70%{transform:translate(40px,-90px) scale(.9)}}
+@keyframes float3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(70px,-100px) scale(1.15)}}
+@keyframes float4{0%,100%{transform:translate(0,0) scale(1)}35%{transform:translate(110px,-60px) scale(1.08)}70%{transform:translate(-60px,70px) scale(.88)}}
+.bg-grid{position:fixed;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);background-size:70px 70px;}
+.bg-noise{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* CURSOR */
+.cursor{position:fixed;width:8px;height:8px;background:rgba(180,140,255,.9);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s;box-shadow:0 0 12px 4px rgba(140,80,255,.6);}
+.cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(160,100,255,.35);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .35s,height .35s;box-shadow:0 0 16px rgba(120,60,255,.2);}
+@media(hover:none){.cursor,.cursor-ring{display:none;}}
+
+/* LIQUID GLASS BTN */
+.lg-btn{
+  display:inline-flex;align-items:center;gap:.45rem;
+  padding:.65rem 1.4rem;border-radius:100px;
+  border:1px solid var(--lg-border);background:var(--lg-bg);
+  backdrop-filter:blur(24px) saturate(200%) brightness(1.1);
+  -webkit-backdrop-filter:blur(24px) saturate(200%) brightness(1.1);
+  color:var(--text);font-family:var(--font-body);
+  font-size:.75rem;font-weight:500;letter-spacing:.05em;
+  text-decoration:none;cursor:pointer;transition:all .38s var(--ease);
+  box-shadow:0 4px 20px var(--lg-shadow),inset 0 1.5px 0 var(--lg-shine),inset 0 -1px 0 rgba(0,0,0,.15),inset 1px 0 0 rgba(255,255,255,.06),inset -1px 0 0 rgba(255,255,255,.06);
+  position:relative;overflow:hidden;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.lg-btn::before{content:'';position:absolute;top:0;left:0;right:0;height:55%;background:linear-gradient(180deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.04) 60%,transparent 100%);border-radius:100px 100px 0 0;pointer-events:none;}
+.lg-btn::after{content:'';position:absolute;top:-50%;left:-60%;width:50%;height:200%;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.06) 50%,transparent 60%);transform:skewX(-15deg);transition:left .6s var(--ease);pointer-events:none;}
+.lg-btn:hover{background:var(--lg-bg-h);border-color:var(--lg-border-h);transform:translateY(-2px) scale(1.01);box-shadow:0 12px 36px var(--lg-shadow),0 0 28px var(--lg-glow-h),0 0 60px rgba(100,50,220,.12),inset 0 1.5px 0 var(--lg-shine-h),inset 0 -1px 0 rgba(0,0,0,.1),inset 1px 0 0 rgba(255,255,255,.1),inset -1px 0 0 rgba(255,255,255,.1);}
+.lg-btn:hover::after{left:110%;}
+.lg-btn:active{transform:translateY(0) scale(.98);}
+.lg-btn svg{width:13px;height:13px;flex-shrink:0;}
+.lg-btn-lg{padding:.9rem 2.3rem;font-size:.84rem;letter-spacing:.07em;}
+.nav-icon{width:40px;height:40px;padding:0;justify-content:center;border-radius:50%;}
+.nav-icon svg{width:16px;height:16px;fill:currentColor;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;justify-content:flex-end;align-items:center;padding:1.4rem 2rem;gap:.8rem;background:var(--nav-bg);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);border-bottom:1px solid rgba(255,255,255,.06);transition:padding .3s;}
+
+/* THEME TOGGLE */
+.theme-toggle{position:fixed;left:1.5rem;top:50%;transform:translateY(-50%);z-index:500;display:flex;flex-direction:column;align-items:center;gap:.6rem;}
+.theme-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--lg-border);background:var(--lg-bg);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all .38s var(--ease);box-shadow:0 4px 20px var(--lg-shadow),0 0 20px var(--lg-glow),inset 0 1.5px 0 var(--lg-shine);-webkit-tap-highlight-color:transparent;}
+.theme-btn:hover{background:var(--lg-bg-h);border-color:var(--lg-border-h);transform:scale(1.1);}
+.theme-label{font-size:.58rem;color:var(--text-faint);letter-spacing:.1em;text-transform:uppercase;writing-mode:vertical-rl;}
+
+/* SECTIONS */
+section{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:6rem 2rem 4rem;text-align:center;}
+
+/* HERO */
+#hero{padding-top:5rem;padding-bottom:3.5rem;}
+
+.hero-eyebrow{
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--text-faint);margin-bottom:1.4rem;
+  opacity:0;transform:translateY(20px);animation:up .8s var(--ease) .1s forwards;
+}
+
+#hero h1{
+  font-family:var(--font-head);
+  font-size:clamp(2.8rem,7vw,6.2rem);
+  font-weight:900;line-height:1.04;letter-spacing:-.02em;
+  max-width:780px;
+  opacity:0;transform:translateY(50px);animation:up .95s var(--ease) .25s forwards;
+  background:linear-gradient(135deg,#ffffff 0%,rgba(240,238,255,.8) 45%,rgba(190,160,255,.65) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+.hero-role{
+  display:block;font-family:var(--font-head);font-style:italic;font-weight:700;
+  font-size:.46em;letter-spacing:.01em;margin-top:.35rem;
+  background:linear-gradient(135deg,rgba(190,160,255,.85) 0%,rgba(140,100,255,.6) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+.hero-cta{margin-top:2.8rem;display:flex;gap:.9rem;flex-wrap:wrap;justify-content:center;opacity:0;animation:up .9s var(--ease) .55s forwards;}
+
+.chevron{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);cursor:pointer;opacity:0;animation:up .8s var(--ease) 1s forwards;}
+.chevron svg{width:24px;height:24px;stroke:var(--text-muted);fill:none;stroke-width:1.5;animation:bob 2.2s ease-in-out infinite;filter:drop-shadow(0 0 8px rgba(120,80,255,.4));}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(9px)}}
+@keyframes up{to{opacity:1;transform:translateY(0)}}
+
+/* SECTION TITLES */
+.sec-title{
+  font-family:var(--font-head);
+  font-size:clamp(2.2rem,5.5vw,4rem);
+  font-weight:900;letter-spacing:-.02em;line-height:1.08;
+  margin-bottom:.55rem;
+  background:linear-gradient(135deg,#fff 0%,rgba(210,195,255,.82) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.sec-sub{
+  font-family:var(--font-mono);font-size:.67rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--text-faint);margin-bottom:3rem;
+}
+
+/* ABOUT */
+#about .avatar{width:110px;height:110px;border-radius:50%;background:var(--lg-bg);backdrop-filter:blur(20px);border:1px solid var(--lg-border);display:flex;align-items:center;justify-content:center;font-size:2.8rem;margin:0 auto 2rem;box-shadow:0 8px 40px rgba(0,0,0,.7),0 0 40px var(--lg-glow),inset 0 1.5px 0 var(--lg-shine);}
+#about p{max-width:480px;font-size:.95rem;line-height:1.9;color:var(--text-muted);margin-bottom:1rem;}
+.about-cta{margin-top:1.4rem;}
+
+/* SKILLS */
+.skills-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;max-width:620px;width:100%;}
+.sk{display:flex;flex-direction:column;align-items:center;gap:.45rem;padding:1rem .8rem;border-radius:16px;border:1px solid var(--lg-border);background:var(--lg-bg);backdrop-filter:blur(24px) saturate(180%) brightness(1.08);-webkit-backdrop-filter:blur(24px) saturate(180%) brightness(1.08);box-shadow:0 4px 24px rgba(0,0,0,.55),inset 0 1.5px 0 var(--lg-shine),inset 0 -1px 0 rgba(0,0,0,.12);cursor:default;transition:all .38s var(--ease);position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;}
+.sk::before{content:'';position:absolute;top:0;left:0;right:0;height:45%;background:linear-gradient(180deg,rgba(255,255,255,.08),transparent);border-radius:16px 16px 0 0;pointer-events:none;}
+.sk:hover,.sk:active{background:var(--lg-bg-h);border-color:var(--lg-border-h);transform:translateY(-5px) scale(1.04);box-shadow:0 14px 40px rgba(0,0,0,.65),0 0 28px var(--lg-glow-h),inset 0 1.5px 0 var(--lg-shine-h);}
+.sk-icon{font-size:1.55rem;line-height:1;}
+.sk span{font-size:.6rem;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;font-weight:500;}
+
+/* PROJECTS */
+.projects-list{display:flex;flex-direction:column;gap:0;width:100%;max-width:680px;text-align:left;}
+.proj{border-top:1px solid rgba(255,255,255,.07);padding:1.8rem 0;display:flex;justify-content:space-between;align-items:flex-start;gap:1.2rem;transition:border-color .3s;}
+.proj:last-child{border-bottom:1px solid rgba(255,255,255,.07);}
+.proj:hover{border-top-color:rgba(255,255,255,.15);}
+.proj-left{flex:1;min-width:0;}
+.proj-num{font-family:var(--font-mono);font-size:.6rem;color:var(--text-faint);letter-spacing:.18em;text-transform:uppercase;margin-bottom:.3rem;}
+.proj-title{font-family:var(--font-head);font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:.5rem;line-height:1.3;}
+.proj-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.6rem;}
+.proj-tag{font-size:.58rem;color:var(--text-muted);border:1px solid var(--lg-border);padding:.14rem .48rem;border-radius:20px;letter-spacing:.04em;background:var(--lg-bg);backdrop-filter:blur(10px);}
+.proj-desc{font-size:.82rem;color:var(--text-faint);line-height:1.8;}
+.proj-action{flex-shrink:0;padding-top:.1rem;}
+
+/* RESUME */
+#resume p.sub{font-size:.9rem;color:var(--text-muted);margin-bottom:2rem;max-width:360px;line-height:1.7;}
+
+/* FOOTER */
+footer{position:relative;z-index:10;text-align:center;padding:1.8rem;font-size:.72rem;color:var(--text-faint);border-top:1px solid rgba(255,255,255,.06);}
+footer a{color:var(--text-muted);text-decoration:none;transition:color .25s;}
+footer a:hover{color:var(--text);text-shadow:0 0 14px rgba(160,100,255,.5);}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .85s var(--ease),transform .85s var(--ease);}
+.reveal.in{opacity:1;transform:none;}
+.d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}.d4{transition-delay:.28s}.d5{transition-delay:.35s}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(130,70,255,.35);border-radius:2px;}
+
+/* ══════════════════════
+   RESPONSIVE
+══════════════════════ */
+@media(max-width:900px){.theme-toggle{display:none;}}
+
+@media(max-width:768px){
+  nav{padding:1rem 1.2rem;gap:.6rem;}
+  .nav-icon{width:36px;height:36px;}
+  section{padding:5rem 1.5rem 3.5rem;min-height:auto;}
+  #hero{min-height:100svh;padding:5rem 1.5rem 3rem;}
+  .hero-eyebrow{font-size:.65rem;}
+  #hero h1{font-size:clamp(2.4rem,9vw,3.8rem);}
+  .hero-cta{gap:.65rem;margin-top:2.2rem;}
+  .lg-btn-lg{padding:.82rem 1.8rem;font-size:.8rem;}
+  .sec-title{font-size:clamp(1.9rem,7vw,2.8rem);}
+  .sec-sub{font-size:.62rem;margin-bottom:2.2rem;}
+  #about .avatar{width:90px;height:90px;font-size:2.2rem;}
+  #about p{font-size:.9rem;}
+  .skills-grid{grid-template-columns:repeat(3,1fr);gap:.7rem;max-width:380px;}
+  .proj{flex-direction:column;gap:.75rem;padding:1.4rem 0;}
+  .proj-action{align-self:flex-start;}
+  .proj-title{font-size:1rem;}
+}
+
+@media(max-width:480px){
+  nav{padding:.85rem 1rem;}
+  section{padding:4.5rem 1.1rem 3rem;}
+  #hero{padding:4.5rem 1.1rem 2.5rem;}
+  #hero h1{font-size:clamp(2rem,10.5vw,2.8rem);}
+  .hero-eyebrow{margin-bottom:.9rem;font-size:.62rem;}
+  .hero-cta{flex-direction:column;align-items:center;gap:.55rem;}
+  .lg-btn-lg{width:100%;max-width:260px;justify-content:center;padding:.85rem 1.2rem;}
+  .skills-grid{grid-template-columns:repeat(2,1fr);gap:.6rem;max-width:280px;}
+  .sk{padding:.9rem .65rem;}
+  .sk-icon{font-size:1.35rem;}
+  .sk span{font-size:.56rem;}
+  #about p{font-size:.87rem;line-height:1.82;}
+  .proj-title{font-size:.97rem;}
+  .proj-desc{font-size:.79rem;}
+}
+
+@supports(padding:max(0px)){
+  nav{padding-left:max(1rem,env(safe-area-inset-left));padding-right:max(1rem,env(safe-area-inset-right));}
+  footer{padding-bottom:max(1.8rem,env(safe-area-inset-bottom));}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-canvas">
+  <div class="orb orb1"></div><div class="orb orb2"></div>
+  <div class="orb orb3"></div><div class="orb orb4"></div>
+</div>
+<div class="bg-grid"></div>
+<div class="bg-noise"></div>
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curRing"></div>
+
+<div class="theme-toggle">
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle theme"><span id="themeIcon">🔆</span></button>
+  <span class="theme-label" id="themeLabel">Dim</span>
+</div>
+
+<nav>
+  <a class="lg-btn nav-icon" href="https://github.com/SuryaBhola" target="_blank" title="GitHub" rel="noopener">
+    <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+  </a>
+  <a class="lg-btn nav-icon" href="https://www.linkedin.com/in/suryabhola-da" target="_blank" title="LinkedIn" rel="noopener">
+    <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+  </a>
+  <a class="lg-btn nav-icon" href="mailto:bholasurya.2006@gmail.com" title="Email">
+    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+  </a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <p class="hero-eyebrow">Portfolio · 2025</p>
+  <h1>Surya Bhola<span class="hero-role">Data Analyst</span></h1>
+  <div class="hero-cta">
+    <a class="lg-btn lg-btn-lg" href="#projects">View Projects <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    <a class="lg-btn lg-btn-lg" href="#resume">Resume <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+  </div>
+  <div class="chevron" id="chevron"><svg viewBox="0 0 24 24" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="avatar reveal">🧑‍💻</div>
+  <p class="reveal d1">BCA candidate (2026) based in Delhi, India — building end-to-end data pipelines, BI dashboards, and AI-assisted analytics across ride-hailing, e-commerce, and financial services.</p>
+  <p class="reveal d2">Proficient in MySQL, Power BI, Python, and MongoDB. Skilled at translating 50,000+ record datasets into actionable insights that drive measurable operational improvements.</p>
+  <p class="reveal d3">Certified in GenAI-powered data analytics (Tata/Forage). Pursuing Cisco Data Analytics with AI certification.</p>
+  <div class="about-cta reveal d4"><a class="lg-btn lg-btn-lg" href="mailto:bholasurya.2006@gmail.com">Let's connect!</a></div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <h2 class="sec-title reveal">Skills</h2>
+  <p class="sec-sub reveal d1">Tools &amp; Technologies</p>
+  <div class="skills-grid reveal d2">
+    <div class="sk"><div class="sk-icon">🐍</div><span>Python</span></div>
+    <div class="sk"><div class="sk-icon">🗄️</div><span>MySQL</span></div>
+    <div class="sk"><div class="sk-icon">🍃</div><span>MongoDB</span></div>
+    <div class="sk"><div class="sk-icon">📊</div><span>Power BI</span></div>
+    <div class="sk"><div class="sk-icon">📈</div><span>Tableau</span></div>
+    <div class="sk"><div class="sk-icon">📓</div><span>Jupyter</span></div>
+    <div class="sk"><div class="sk-icon">🐼</div><span>Pandas</span></div>
+    <div class="sk"><div class="sk-icon">🎨</div><span>Matplotlib</span></div>
+    <div class="sk"><div class="sk-icon">📋</div><span>Excel</span></div>
+    <div class="sk"><div class="sk-icon">⚡</div><span>DAX</span></div>
+    <div class="sk"><div class="sk-icon">🔄</div><span>Power Query</span></div>
+    <div class="sk"><div class="sk-icon">🤖</div><span>GenAI Tools</span></div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <h2 class="sec-title reveal">Projects</h2>
+  <p class="sec-sub reveal d1">Selected Work</p>
+  <div class="projects-list">
+    <div class="proj reveal">
+      <div class="proj-left">
+        <div class="proj-num">01</div>
+        <div class="proj-title">TubeMetrics</div>
+        <div class="proj-tags"><span class="proj-tag">Python</span><span class="proj-tag">YouTube API</span><span class="proj-tag">Pandas</span><span class="proj-tag">Data Analytics</span></div>
+        <div class="proj-desc">A YouTube channel analytics tool that extracts and visualises key performance metrics — views, engagement, growth trends — using the YouTube Data API and Python data stack.</div>
+      </div>
+      <div class="proj-action"><a class="lg-btn" href="https://github.com/SuryaBhola/TubeMetrics" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>View</a></div>
+    </div>
+    <div class="proj reveal d1">
+      <div class="proj-left">
+        <div class="proj-num">02</div>
+        <div class="proj-title">Uber Operations Analytics Dashboard</div>
+        <div class="proj-tags"><span class="proj-tag">Power BI</span><span class="proj-tag">Excel Power Query</span><span class="proj-tag">DAX</span></div>
+        <div class="proj-desc">Cleaned 50,000+ trip records, built 8 real-time DAX KPI measures, drill-through dashboards by city &amp; time-of-day — modelling a 15% reduction in cancellation rate.</div>
+      </div>
+      <div class="proj-action"><a class="lg-btn" href="https://github.com/SuryaBhola" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>View</a></div>
+    </div>
+    <div class="proj reveal d2">
+      <div class="proj-left">
+        <div class="proj-num">03</div>
+        <div class="proj-title">Vendor Performance &amp; Inventory Risk Dashboard</div>
+        <div class="proj-tags"><span class="proj-tag">Python</span><span class="proj-tag">Pandas</span><span class="proj-tag">Matplotlib</span></div>
+        <div class="proj-desc">6-page dashboard across 200 vendor records — surfaced $2.3M in unsold inventory and modelled a 12–15% COGS margin improvement through SKU consolidation.</div>
+      </div>
+      <div class="proj-action"><a class="lg-btn" href="https://github.com/SuryaBhola" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>View</a></div>
+    </div>
+    <div class="proj reveal d3">
+      <div class="proj-left">
+        <div class="proj-num">04</div>
+        <div class="proj-title">E-Commerce Sales Performance Tracker</div>
+        <div class="proj-tags"><span class="proj-tag">MySQL</span><span class="proj-tag">Power BI</span><span class="proj-tag">DAX</span></div>
+        <div class="proj-desc">12+ MySQL queries with CTEs &amp; stored procedures integrated via DirectQuery — cut executive reporting from 3 days to same-day, modelling 20% marketing budget efficiency.</div>
+      </div>
+      <div class="proj-action"><a class="lg-btn" href="https://github.com/SuryaBhola" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>View</a></div>
+    </div>
+    <div class="proj reveal d4">
+      <div class="proj-left">
+        <div class="proj-num">05</div>
+        <div class="proj-title">Customer Behavior &amp; Shopify Sales Dashboard</div>
+        <div class="proj-tags"><span class="proj-tag">Power BI</span><span class="proj-tag">Excel</span><span class="proj-tag">DAX</span></div>
+        <div class="proj-desc">RFM segmentation of 10,000+ customers into 4 behavioural tiers. Funnel analysis revealed a 28% cart abandonment spike on mobile at payment stage, enabling targeted UX fixes.</div>
+      </div>
+      <div class="proj-action"><a class="lg-btn" href="https://github.com/SuryaBhola" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>View</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- RESUME -->
+<section id="resume">
+  <h2 class="sec-title reveal">Resume</h2>
+  <p class="sec-sub reveal d1">Full Details &amp; Certifications</p>
+  <p class="sub reveal d2">Download my resume to view full project details, certifications &amp; education.</p>
+  <a class="lg-btn lg-btn-lg reveal d3" href="Surya_Bhola_Resume.pdf" download="Surya_Bhola_Resume.pdf">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Download Resume
+  </a>
+</section>
+
+<footer>Made with ♥ by <a href="https://github.com/SuryaBhola" target="_blank" rel="noopener">Surya Bhola</a></footer>
+
+<script>
+if(window.innerWidth>768){
+  document.documentElement.style.overflow='hidden';
+  document.body.style.overflow='hidden';
+  const scroller=document.createElement('div');
+  scroller.id='scroller';
+  scroller.style.cssText='position:fixed;inset:0;overflow-y:scroll;overflow-x:hidden;z-index:5;scroll-behavior:auto;';
+  const frag=document.createDocumentFragment();
+  while(document.body.firstChild) frag.appendChild(document.body.firstChild);
+  scroller.appendChild(frag);
+  document.body.appendChild(scroller);
+  ['cur','curRing'].forEach(id=>{const el=scroller.querySelector('#'+id);if(el)document.body.appendChild(el);});
+  let scrollY=0,targetY=0;
+  scroller.addEventListener('scroll',()=>{targetY=scroller.scrollTop;});
+  function tick(){scrollY+=(targetY-scrollY)*0.1;document.querySelectorAll('.orb').forEach((orb,i)=>{const speed=[0.07,0.11,0.05,0.09][i]||0.07;orb.style.transform=`translateY(${scrollY*speed}px)`;});requestAnimationFrame(tick);}
+  tick();
+}else{
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth'});});});
+}
+
+const cur=document.getElementById('cur'),ring=document.getElementById('curRing');
+let mx=0,my=0,rx=0,ry=0;
+if(cur&&ring){
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+  (function animRing(){rx+=(mx-rx)*0.1;ry+=(my-ry)*0.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
+  document.querySelectorAll('a,button').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{cur.style.width='5px';cur.style.height='5px';ring.style.width='54px';ring.style.height='54px';});
+    el.addEventListener('mouseleave',()=>{cur.style.width='8px';cur.style.height='8px';ring.style.width='32px';ring.style.height='32px';});
+  });
+}
+
+const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.1,root:document.getElementById('scroller')||null});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+const chevron=document.getElementById('chevron');
+if(chevron)chevron.addEventListener('click',()=>{const a=document.getElementById('about'),s=document.getElementById('scroller');if(s)s.scrollTo({top:a.offsetTop,behavior:'smooth'});else a.scrollIntoView({behavior:'smooth'});});
+
+const html=document.documentElement,themeBtn=document.getElementById('themeBtn'),themeIcon=document.getElementById('themeIcon'),themeLabel=document.getElementById('themeLabel');
+let isDark=true;
+function setTheme(d){isDark=d;html.setAttribute('data-theme',d?'dark':'light');themeIcon.textContent=d?'🔆':'🌙';themeLabel.textContent=d?'Dim':'Pure';}
+if(themeBtn)themeBtn.addEventListener('click',()=>setTheme(!isDark));
+
+const nav=document.querySelector('nav'),scrollEl=document.getElementById('scroller')||window;
+scrollEl.addEventListener('scroll',()=>{const sy=scrollEl.scrollTop!==undefined?scrollEl.scrollTop:window.scrollY;nav.style.padding=sy>50?'.75rem 2rem':'1.4rem 2rem';});
+</script>
+</body>
+</html>
